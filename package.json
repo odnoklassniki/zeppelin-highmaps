@@ -1,0 +1,11 @@
+{
+  "name": "zeppelin-rf-map",
+  "version": "1.0.0",
+  "description": "Zeppelin plugin to visualize data on the Russia Federation map",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "OK",
+  "license": "Apache-2.0"
+}
