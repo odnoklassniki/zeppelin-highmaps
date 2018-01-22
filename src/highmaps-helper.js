@@ -105,6 +105,16 @@ function createHighchartsMapInstance(params, colorAxisDataClasses) {
         colorAxis: {
             dataClasses: colorAxisDataClasses
         },
+        xAxis: {
+            events: {
+                afterSetExtremes: (event) => saveExtremes(event, 'x', params.mapPath)
+            }
+        },
+        yAxis: {
+            events: {
+                afterSetExtremes: (event) => saveExtremes(event, 'y', params.mapPath)
+            }
+        },
         series: [{
             data: params.data.slice(),
             name: 'Data set',
@@ -115,7 +125,69 @@ function createHighchartsMapInstance(params, colorAxisDataClasses) {
                 }
             }
         }]
+    }, function (chart) {
+        restoreZoom(chart, params.mapPath);
     });
+}
+
+
+/**
+ * Restores zoom settings from localStorage
+ * @see http://sibeeshpassion.com/how-to-save-the-zoom-view-of-our-map/
+ * @private
+ * @param {Highcharts.Chart} chart Chart instance.
+ * @param {string} mapPath
+ */
+function restoreZoom(chart, mapPath) {
+    const xExtremes = restoreExtemes('x', mapPath);
+    const yExtremes = restoreExtemes('y', mapPath);
+    if (!xExtremes || !yExtremes) {
+        return;
+    }
+
+    chart.xAxis[0].setExtremes(xExtremes.min, xExtremes.max);
+    chart.yAxis[0].setExtremes(yExtremes.min, yExtremes.max);
+}
+
+
+/**
+ * Restores extremes (min,max) from sessionStorage for given axisType and mapPath.
+ * @see http://sibeeshpassion.com/how-to-save-the-zoom-view-of-our-map/
+ * @private
+ * @param {string} axisType
+ * @param {string} mapPath
+ * @returns {object} { min: number, max: number} or null if no value is stored in the sessionStorage.
+ */
+function restoreExtemes(axisType, mapPath) {
+    const key = `exteme_${axisType}_${mapPath}`;
+    const value = sessionStorage.getItem(key) || '';
+    const rawExtremes = value.split(' ');
+    if (rawExtremes.length !== 2) {
+        return null;
+    }
+
+    const extremes = {
+        min: +rawExtremes[0],
+        max: +rawExtremes[1]
+    };
+    return extremes;
+}
+
+
+/**
+ * Saves given extremes from event for given map and axis type to the sessionStorage.
+ * @see http://sibeeshpassion.com/how-to-save-the-zoom-view-of-our-map/
+ * @private
+ * @param {object} event afterSetExtremes event.
+ * @param {number} event.max
+ * @param {number} event.min
+ * @param {string} axisType
+ * @param {string} mapPath
+ */
+function saveExtremes(event, axisType, mapPath) {
+    const key = `exteme_${axisType}_${mapPath}`;
+    const value = [event.min.toFixed(5), event.max.toFixed(5)].join(' ');
+    sessionStorage.setItem(key, value);
 }
 
 
