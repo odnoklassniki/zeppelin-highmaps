@@ -1,11 +1,18 @@
 {
-  "name": "zeppelin-rf-map",
+  "name": "zeppelin-highmaps",
   "version": "1.0.0",
-  "description": "Zeppelin plugin to visualize data on the Russia Federation map",
-  "main": "index.js",
+  "description": "Zeppelin plugin to visualize data using Highmaps",
+  "main": "src/zeppelin-highmaps.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "OK",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "highcharts": "6.0.4",
+    "lodash": "4.17.4",
+    "node-polyglot": "2.2.2",
+    "zeppelin-tabledata": "^0.7.1",
+    "zeppelin-vis": "^0.7.3-SNAPSHOT"
+  }
 }
