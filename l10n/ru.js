@@ -1,5 +1,6 @@
 const ru = {
     settings: {
+        allAreas: 'Отображать всё',
         invalid: 'Пожалуйста, выберите столбцы для получения значений "region" и "value"!',
         map: 'Карта',
         rangesNumber: 'Кол-во интервалов',

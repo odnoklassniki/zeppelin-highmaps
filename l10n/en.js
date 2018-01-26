@@ -1,5 +1,6 @@
 const en = {
     settings: {
+        allAreas: 'All areas',
         invalid: 'Please, provide columns for "region" and "value" properties!',
         map: 'Map',
         rangesNumber: 'Ranges number',

@@ -15,6 +15,7 @@ import Highcharts from 'highcharts/highmaps';
  * @property {string} mapPath Path to Highmaps mapdata.
  * http://code.highcharts.com/mapdata/
  * @property {ChartDataItem} data Chart data.
+ * @property {boolean} allAreas Need to show all areas of map.
  * @property {number} rangesNumber Number of ranges to generate.
  * @property {number} [minInRange] Number to use as minimum value.
  * @property {number} [maxInRange] Number to use as maximum value.
@@ -131,6 +132,7 @@ function createHighchartsMapInstance(params, colorAxisDataClasses) {
             data: params.data.slice(),
             name: 'Data set',
             joinBy: 'hc-key',
+            allAreas: params.allAreas,
             states: {
                 hover: {
                     color: '#724cf9'

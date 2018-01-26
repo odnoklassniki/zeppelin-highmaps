@@ -11,6 +11,7 @@ function concatStyles(...rules) {
 function getSettingsPanelTemplate(params) {
     const idPrefix = params.idPrefix;
     const ids = {
+        allAreas: `${idPrefix}_all-areas`,
         rangesNumber: `${idPrefix}_ranges-number`,
         minInRange: `${idPrefix}_min-in-range`,
         maxInRange: `${idPrefix}_max-in-range`,
@@ -24,7 +25,7 @@ function getSettingsPanelTemplate(params) {
             'text-align: right',
             'width: 100px'
         ),
-        formGroups: concatStyles(
+        formGroup: concatStyles(
             'margin-left: 30px',
             'margin-right: 30px'
         )
@@ -32,7 +33,7 @@ function getSettingsPanelTemplate(params) {
 
     return `
 <form class="form-horizontal form-inline" ng-submit="updateMap()">
-    <div class="form-group" style="${styles.formGroups}">
+    <div class="form-group" style="${styles.formGroup}">
         <label for="${ids.map}" style="${styles.label}">
             {{:: l10n('settings.map') }}:
         </label>
@@ -49,7 +50,7 @@ function getSettingsPanelTemplate(params) {
             </option>
         </select>
     </div>
-    <div class="form-group" style="${styles.formGroups}">
+    <div class="form-group" style="${styles.formGroup}">
         <label for="${ids.rangesNumber}" style="${styles.label}">
             {{:: l10n('settings.rangesNumber') }}:
         </label>
@@ -65,7 +66,7 @@ function getSettingsPanelTemplate(params) {
             ng-enter="updateMap()"
         >
     </div>
-    <div class="form-group" style="${styles.formGroups}">
+    <div class="form-group" style="${styles.formGroup}">
         <label for="${ids.minInRange}" style="${styles.label}">
             {{:: l10n('settings.minInRange') }}:
         </label>
@@ -79,7 +80,7 @@ function getSettingsPanelTemplate(params) {
             ng-enter="updateMap()"
         >
     </div>
-    <div class="form-group" style="${styles.formGroups}">
+    <div class="form-group" style="${styles.formGroup}">
         <label for="${ids.maxInRange}" style="${styles.label}">
             {{:: l10n('settings.maxInRange') }}:
         </label>
@@ -92,6 +93,19 @@ function getSettingsPanelTemplate(params) {
             ng-blur="updateMap()"
             ng-enter="updateMap()"
         >
+    </div>
+    <div class="form-group" style="${styles.formGroup}">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox"
+                    id="${ids.allAreas}"
+                    name="all-areas",
+                    ng-model="allAreas"
+                    ng-change="updateMap()"
+                >
+                {{:: l10n('settings.allAreas') }}
+            </label>
+        </div>
     </div>
 </form>
     `;

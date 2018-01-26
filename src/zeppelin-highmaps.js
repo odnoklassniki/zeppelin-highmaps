@@ -40,6 +40,7 @@ export default class ZeppelinHighmaps extends Visualization {
         this.columnselector = new ColumnselectorTransformation(config, this.columnselectorProps);
 
         this.params = {
+            allAreas: true,
             map: constants.defaultMap,
             rangesNumber: 5,
             minInRange: NaN,
@@ -101,6 +102,7 @@ export default class ZeppelinHighmaps extends Visualization {
             containerElement: this.chartContainer,
             mapPath,
             data,
+            allAreas: this.params.allAreas,
             rangesNumber: this.params.rangesNumber,
             minInRange: this.params.minInRange,
             maxInRange: this.params.maxInRange
@@ -118,13 +120,13 @@ export default class ZeppelinHighmaps extends Visualization {
 
 
     /**
-     * Updates chart with given range settings.
+     * Updates chart with given values settings without redrawing.
      * @param {number} rangesNumber
      * @param {number|string} minInRange
      * @param {number|string} maxInRange
      * @returns {boolean} Returns true if chart was updated.
      */
-    updateChartByRanges(rangesNumber, rawMinInRange, rawMaxInRange) {
+    updateChartByValues(rangesNumber, rawMinInRange, rawMaxInRange) {
         let hasChanges = false;
 
         if (this.params.rangesNumber !== rangesNumber) {
@@ -151,20 +153,40 @@ export default class ZeppelinHighmaps extends Visualization {
                 minInRange: this.params.minInRange,
                 maxInRange: this.params.maxInRange
             });
+            return hasChanges;
         }
 
         return hasChanges;
     }
 
 
-    updateChartByMap(newMap) {
-        if (this.params.map === newMap) {
-            return false;
+    /**
+     * Updates chart with given values by creating new chart instead of old one.
+     * @param {string} newMap
+     * @param {boolean} allAreas
+     */
+    redrawsChartByValues(newMap, allAreas) {
+        let hasChanges = false;
+
+        // Unfortunatelly, if "update" method was called on chart instance,
+        // previous map is still visible.
+        if (this.params.map !== newMap) {
+            this.params.map = newMap;
+            hasChanges = true;
         }
 
-        this.params.map = newMap;
-        this.redrawChart();
-        return true;
+        // Unfortunatelly, only first change of allAreas makes map to hide or show null-value regions,
+        // rest changes do not affect the chart map.
+        if (this.params.allAreas !== allAreas) {
+            this.params.allAreas = allAreas;
+            hasChanges = true;
+        }
+
+        if (hasChanges) {
+            this.redrawChart();
+        }
+
+        return hasChanges;
     }
 
 
@@ -205,6 +227,7 @@ export default class ZeppelinHighmaps extends Visualization {
             }),
             scope: {
                 l10n,
+                allAreas: self.params.allAreas,
                 rangesNumber: self.params.rangesNumber,
                 minInRange: self.params.minInRange || '',
                 maxInRange: self.params.maxInRange || '',
@@ -213,15 +236,15 @@ export default class ZeppelinHighmaps extends Visualization {
                 updateMap: function () {
                     const scope = this;
 
-                    const chartUpdatedByRanges = self.updateChartByRanges(
+                    const chartUpdatedByValues = self.updateChartByValues(
                         scope.rangesNumber, scope.minInRange, scope.maxInRange);
-                    if (chartUpdatedByRanges) {
+                    if (chartUpdatedByValues) {
                         return;
                     }
 
                     const newMap = scope.map || constants.defaultMap;
-                    const chartUpdatedByMap = self.updateChartByMap(newMap);
-                    if (chartUpdatedByMap) {
+                    const chartRedrawnByValues = self.redrawsChartByValues(newMap, scope.allAreas);
+                    if (chartRedrawnByValues) {
                         return;
                     }
                 }
