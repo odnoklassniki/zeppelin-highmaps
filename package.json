@@ -6,7 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "OK",
+  "keywords": [
+    "zeppelin",
+    "helium",
+    "visualization",
+    "highmaps"
+  ],
+  "author": "odnoklassniki",
   "license": "Apache-2.0",
   "dependencies": {
     "highcharts": "6.0.4",
@@ -14,5 +20,17 @@
     "node-polyglot": "2.2.2",
     "zeppelin-tabledata": "^0.7.1",
     "zeppelin-vis": "^0.7.3-SNAPSHOT"
-  }
+  },
+  "helium": {
+    "icon": "<i class='fa fa-globe' style='color: #ee8208;'></i>",
+    "license": "Apache-2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odnoklassniki/zeppelin-highmaps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/odnoklassniki/zeppelin-highmaps/issues"
+  },
+  "homepage": "https://github.com/odnoklassniki/zeppelin-highmaps/blob/master/README.md"
 }
