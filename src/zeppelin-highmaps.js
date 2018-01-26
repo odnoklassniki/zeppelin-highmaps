@@ -5,8 +5,13 @@ import Highcharts from 'highcharts/highmaps';
 import getSettingsPanelTemplate from './settings-panel-template';
 import { l10n } from './l10n';
 import { maxmindToHighmaps, highmapsMapdata } from './data';
-import { toNumber } from './utils';
-import { createHighchartMap, updateHighchartMapData, destroyHighchartMap } from './highmaps-helper';
+import { toNumber, isSameNumber } from './utils';
+import {
+    createHighchartMap,
+    updateHighchartMapData,
+    updateHighchartByRanges,
+    destroyHighchartMap
+} from './highmaps-helper';
 
 
 let instancesNumber = 0;
@@ -41,7 +46,7 @@ export default class ZeppelinHighmaps extends Visualization {
             maxInRange: NaN
         };
 
-        this.tableData = null;
+        this.data = [];
 
         this.chart = null;
         this.chartContainer = this.createChartContainer();
@@ -74,7 +79,7 @@ export default class ZeppelinHighmaps extends Visualization {
             this.hideError();
         }
 
-        this.tableData = tableData;
+        this.data = this.getData(tableData);
 
         if (this.chart) {
             this.updateChart();
@@ -90,12 +95,11 @@ export default class ZeppelinHighmaps extends Visualization {
     redrawChart() {
         destroyHighchartMap(this.chart);
 
-        const data = this.getData(this.tableData);
         const mapPath = this.registerMapData(this.params.map);
         this.chart = createHighchartMap({
             containerElement: this.chartContainer,
             mapPath,
-            data,
+            data: this.data,
             rangesNumber: this.params.rangesNumber,
             minInRange: this.params.minInRange,
             maxInRange: this.params.maxInRange
@@ -107,8 +111,58 @@ export default class ZeppelinHighmaps extends Visualization {
      * Updates chart's series.
      */
     updateChart() {
-        const data = this.getData(this.tableData);
-        updateHighchartMapData(this.chart, data);
+        updateHighchartMapData(this.chart, this.data);
+    }
+
+
+    /**
+     * Updates chart with given range settings.
+     * @param {number} rangesNumber
+     * @param {number|string} minInRange
+     * @param {number|string} maxInRange
+     * @returns {boolean} Returns true if chart was updated.
+     */
+    updateChartByRanges(rangesNumber, rawMinInRange, rawMaxInRange) {
+        let hasChanges = false;
+
+        if (this.params.rangesNumber !== rangesNumber) {
+            this.params.rangesNumber = rangesNumber;
+            hasChanges = true;
+        }
+
+        const minInRange = toNumber(rawMinInRange);
+        if (!isSameNumber(minInRange, this.params.minInRange)) {
+            this.params.minInRange = minInRange;
+            hasChanges = true;
+        }
+
+        const maxInRange = toNumber(rawMaxInRange);
+        if (!isSameNumber(maxInRange, this.params.maxInRange)) {
+            this.params.maxInRange = maxInRange;
+            hasChanges = true;
+        }
+
+        if (hasChanges) {
+            updateHighchartByRanges(this.chart, {
+                rangesNumber: this.params.rangesNumber,
+                data: this.data,
+                minInRange: this.params.minInRange,
+                maxInRange: this.params.maxInRange
+            });
+        }
+
+        return hasChanges;
+    }
+
+
+    updateChartByMap(newMap) {
+        if (this.params.map === newMap) {
+            return false;
+        }
+
+        this.params.map = newMap;
+        this.redrawChart();
+        return true;
     }
 
 
@@ -156,11 +210,18 @@ export default class ZeppelinHighmaps extends Visualization {
                 map: constants.defaultMap,
                 updateMap: function () {
                     const scope = this;
-                    self.params.rangesNumber = scope.rangesNumber;
-                    self.params.minInRange = toNumber(scope.minInRange);
-                    self.params.maxInRange = toNumber(scope.maxInRange);
-                    self.params.map = scope.map || constants.defaultMap;
-                    self.redrawChart();
+
+                    const chartUpdatedByRanges = self.updateChartByRanges(
+                        scope.rangesNumber, scope.minInRange, scope.maxInRange);
+                    if (chartUpdatedByRanges) {
+                        return;
+                    }
+
+                    const newMap = scope.map || constants.defaultMap;
+                    const chartUpdatedByMap = self.updateChartByMap(newMap);
+                    if (chartUpdatedByMap) {
+                        return;
+                    }
                 }
             }
         };

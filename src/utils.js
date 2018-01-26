@@ -12,3 +12,15 @@ export function toNumber(source) {
     }
     return NaN;
 }
+
+
+/**
+ * Checks is given numbers are same.
+ * NaN is equal NaN in this case.
+ * @param {number} a
+ * @param {number} b
+ * @returns {boolean}
+ */
+export function isSameNumber(a, b) {
+    return isNaN(a) && isNaN(b) || a === b;
+}

@@ -65,6 +65,18 @@ export function updateHighchartMapData(chart, ...datas) {
 
 
 /**
+ * Updates colorAxis with given settings.
+ * @param {Highcharts.Chart} chart
+ * @param {CommonParams} params
+ */
+export function updateHighchartByRanges(chart, params) {
+    const ranges = getRanges(params);
+    const dataClasses = getColorAxisDataClasses(ranges);
+    chart.colorAxis[0].update({ dataClasses });
+}
+
+
+/**
  * Creates new instance of the Highcharts.mapChart and inserts it to a given container.
  * @private
  * @param {CommonParams} params
