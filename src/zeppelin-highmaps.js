@@ -46,7 +46,7 @@ export default class ZeppelinHighmaps extends Visualization {
             maxInRange: NaN
         };
 
-        this.data = [];
+        this.tableData = null;
 
         this.chart = null;
         this.chartContainer = this.createChartContainer();
@@ -79,7 +79,7 @@ export default class ZeppelinHighmaps extends Visualization {
             this.hideError();
         }
 
-        this.data = this.getData(tableData);
+        this.tableData = tableData;
 
         if (this.chart) {
             this.updateChart();
@@ -95,11 +95,12 @@ export default class ZeppelinHighmaps extends Visualization {
     redrawChart() {
         destroyHighchartMap(this.chart);
 
+        const data = this.getData(this.tableData);
         const mapPath = this.registerMapData(this.params.map);
         this.chart = createHighchartMap({
             containerElement: this.chartContainer,
             mapPath,
-            data: this.data,
+            data,
             rangesNumber: this.params.rangesNumber,
             minInRange: this.params.minInRange,
             maxInRange: this.params.maxInRange
@@ -111,7 +112,8 @@ export default class ZeppelinHighmaps extends Visualization {
      * Updates chart's series.
      */
     updateChart() {
-        updateHighchartMapData(this.chart, this.data);
+        const data = this.getData(this.tableData);
+        updateHighchartMapData(this.chart, data);
     }
 
 
@@ -145,7 +147,7 @@ export default class ZeppelinHighmaps extends Visualization {
         if (hasChanges) {
             updateHighchartByRanges(this.chart, {
                 rangesNumber: this.params.rangesNumber,
-                data: this.data,
+                data: this.getData(this.tableData),
                 minInRange: this.params.minInRange,
                 maxInRange: this.params.maxInRange
             });
