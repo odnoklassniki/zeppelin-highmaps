@@ -2,7 +2,7 @@
 
 [Highmaps](https://www.highcharts.com/maps/demo) visualization for Zeppelin data.
 
-![](https://raw.githubusercontent.com/../zeppelin-highmaps/master/screenshots/world.png)
+![](https://raw.githubusercontent.com/odnoklassniki/zeppelin-highmaps/master/screenshots/world.png)
 
 ## Compatibility
 
