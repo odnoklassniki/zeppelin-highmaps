@@ -35,7 +35,7 @@ export function createHighchartMap(params) {
 
 
 /**
- * Destroyes given chart and it's container.
+ * Destroys given chart and it's container.
  * @see https://api.highcharts.com/class-reference/Highcharts.Chart
  * @param {Highcharts.Chart} chart Chart instance.
  */
@@ -52,14 +52,15 @@ export function destroyHighchartMap(chart) {
 
 /**
  * Updates series within given chart.
- * @param {*} args
+ * @param {Highcharts.Chart} chart Chart instance.
+ * @param {...ChartDataItem[]} seriesData Data for corresponding series.
  * @example
  * const dataForFirstSerie = ...;
  * const dataForSecondSerie = ...;
  * updateHighchartMapData(chartInstance, dataForFirstSerie, dataForSecondSerie);
  */
-export function updateHighchartMapData(chart, ...datas) {
-    datas.forEach((data, index) => {
+export function updateHighchartMapData(chart, ...seriesData) {
+    seriesData.forEach((data, index) => {
         chart.series[index].setData(data);
     });
 }
@@ -153,8 +154,8 @@ function createHighchartsMapInstance(params, colorAxisDataClasses) {
  * @param {string} mapPath
  */
 function restoreZoom(chart, mapPath) {
-    const xExtremes = restoreExtemes('x', mapPath);
-    const yExtremes = restoreExtemes('y', mapPath);
+    const xExtremes = restoreExtremes('x', mapPath);
+    const yExtremes = restoreExtremes('y', mapPath);
     if (!xExtremes || !yExtremes) {
         return;
     }
@@ -172,7 +173,7 @@ function restoreZoom(chart, mapPath) {
  * @param {string} mapPath
  * @returns {object} { min: number, max: number} or null if no value is stored in the sessionStorage.
  */
-function restoreExtemes(axisType, mapPath) {
+function restoreExtremes(axisType, mapPath) {
     const key = `exteme_${axisType}_${mapPath}`;
     const value = sessionStorage.getItem(key) || '';
     const rawExtremes = value.split(' ');
@@ -208,7 +209,7 @@ function saveExtremes(event, axisType, mapPath) {
 /**
  * Generates colorAxis.dataClasses values for given data ranges.
  * @private
- * @param {number} ranges
+ * @param {number[]} ranges
  * @returns {object[]}
  * https://api.highcharts.com/highcharts/colorAxis.dataClasses
  */

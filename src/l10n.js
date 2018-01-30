@@ -9,11 +9,22 @@ const defaultPhrases = l10nPhrases[defaultLocale];
 const phrases = l10nPhrases[locale] || defaultPhrases;
 
 
+/**
+ * Logs arguments with fixed app-related prefix.
+ * @private
+ * @param {...any} args
+ */
 function log(...args) {
     console.log('[zeppelin-highmaps l10n]', ...args);
 }
 
 
+/**
+ * Missing localization key handler.
+ * @private
+ * @param {string} missedKey Missed localization key.
+ * @param {object} [opts] Default key template options.
+ */
 function onMissingKey(missedKey, opts) {
     const defaultValue = get(defaultPhrases, missedKey, '');
     if (defaultValue) {
