@@ -1,4 +1,5 @@
 import Highcharts from 'highcharts/highmaps';
+import { parseHTML } from './utils';
 
 
 /**
@@ -294,10 +295,11 @@ function getRanges(params) {
  */
 function createHighchartChartElement(container) {
     const random = Math.floor(Math.random() * 1000000);
-    const chartElement = document.createElement('div');
-    chartElement.id = `${container.id}__chart_${random}`;
-    chartElement.style.height = '100%';
-    chartElement.style.flex = '1';
+    const chartElementHtml = ''
+        + `<div id="${container.id}__chart_${random}" `
+            + `style="height: 100%; flex: 1;" `
+        + `></div>`;
+    const chartElement = parseHTML(chartElementHtml)[0];
     container.appendChild(chartElement);
     return chartElement;
 }

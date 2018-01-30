@@ -5,7 +5,7 @@ import Highcharts from 'highcharts/highmaps';
 import getSettingsPanelTemplate from './settings-panel-template';
 import { l10n } from './l10n';
 import { maxmindToHighmaps, highmapsMapdata } from './data';
-import { toNumber, isSameNumber } from './utils';
+import { toNumber, isSameNumber, parseHTML } from './utils';
 import {
     createHighchartMap,
     updateHighchartMapData,
@@ -195,15 +195,12 @@ export default class ZeppelinHighmaps extends Visualization {
      * @returns {HTMLElement}
      */
     createChartContainer() {
-        const chartContainer = document.createElement('div');
-        chartContainer.id = `${this.instanceId}-chart-container`;
-        chartContainer.style.height = '100%';
-        chartContainer.style.flex = '1';
         // TBD: several maps for one data set.
-        chartContainer.style.display = 'flex';
-        chartContainer.style.flexDirection = 'row';
-        this.targetEl.append(chartContainer);
-        this.chartContainer = chartContainer;
+        const chartContainerHtml = `<div id="${this.instanceId}-chart-container" `
+            + 'style="height: 100%; flex: 1; display: flex; flex-direction: row;" '
+            + '></div>';
+        this.chartContainer = parseHTML(chartContainerHtml)[0];
+        this.targetEl.append(this.chartContainer);
         return this.chartContainer;
     }
 
@@ -303,8 +300,8 @@ export default class ZeppelinHighmaps extends Visualization {
      */
     renderError(errorMsg) {
         if (!this.errorElement) {
-            this.errorElement = document.createElement('span');
-            this.errorElement.style.color = 'red';
+            const errorElementHtml = '<span style="color: red;"></span>';
+            this.errorElement = parseHTML(errorElementHtml)[0];
             this.targetEl.prepend(this.errorElement);
         }
         this.errorElement.innerHTML = errorMsg;
