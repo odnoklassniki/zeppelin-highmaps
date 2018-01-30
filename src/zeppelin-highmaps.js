@@ -5,7 +5,7 @@ import Highcharts from 'highcharts/highmaps';
 import getSettingsPanelTemplate from './settings-panel-template';
 import { l10n } from './l10n';
 import { maxmindToHighmaps, highmapsMapdata } from './data';
-import { toNumber, isSameNumber, parseHTML } from './utils';
+import { isSameNumber, parseHTML } from './utils';
 import {
     createHighchartMap,
     updateHighchartMapData,
@@ -97,6 +97,7 @@ export default class ZeppelinHighmaps extends Visualization {
         destroyHighchartMap(this.chart);
 
         const data = this.getData(this.tableData);
+
         const mapPath = this.registerMapData(this.params.map);
         this.chart = createHighchartMap({
             containerElement: this.chartContainer,
@@ -134,13 +135,13 @@ export default class ZeppelinHighmaps extends Visualization {
             hasChanges = true;
         }
 
-        const minInRange = toNumber(rawMinInRange);
+        const minInRange = parseFloat(rawMinInRange);
         if (!isSameNumber(minInRange, this.params.minInRange)) {
             this.params.minInRange = minInRange;
             hasChanges = true;
         }
 
-        const maxInRange = toNumber(rawMaxInRange);
+        const maxInRange = parseFloat(rawMaxInRange);
         if (!isSameNumber(maxInRange, this.params.maxInRange)) {
             this.params.maxInRange = maxInRange;
             hasChanges = true;
@@ -277,7 +278,7 @@ export default class ZeppelinHighmaps extends Visualization {
         const data = tableData.rows
             .map(row => {
                 const regionId = row[this.config.region.index];
-                const value = toNumber(row[this.config.value.index]);
+                const value = parseFloat(row[this.config.value.index]);
                 return {
                     // Uses regionId as country code if no regions map found for this map.
                     'hc-key': regionsMap ? regionsMap[regionId] : regionId.toLowerCase(),
