@@ -1,5 +1,6 @@
 import Highcharts from 'highcharts/highmaps';
 import { parseHTML } from './utils';
+import get from 'lodash/get';
 
 
 /**
@@ -42,7 +43,7 @@ export function createHighchartMap(params) {
  */
 export function destroyHighchartMap(chart) {
     if (chart) {
-        const chartContainer = chart.container.parentNode;
+        const chartContainer = get(chart, 'container.parentNode', null);
         chart.destroy();
         if (chartContainer) {
             chartContainer.parentNode.removeChild(chartContainer);
@@ -201,6 +202,10 @@ function restoreExtremes(axisType, mapPath) {
  * @param {string} mapPath
  */
 function saveExtremes(event, axisType, mapPath) {
+    if (isNaN(event.min) || isNaN(event.max)) {
+        return;
+    }
+
     const key = `exteme_${axisType}_${mapPath}`;
     const value = [event.min.toFixed(5), event.max.toFixed(5)].join(' ');
     sessionStorage.setItem(key, value);
